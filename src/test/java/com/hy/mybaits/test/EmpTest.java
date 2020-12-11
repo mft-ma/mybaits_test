@@ -20,7 +20,6 @@ public class EmpTest {
         employee.setGender("F");
         PageHelper.startPage(2,5);
         List<Employee> employees = empService.queryAll(employee,1);
-        employees.forEach(System.out::println);
     }
 
 }

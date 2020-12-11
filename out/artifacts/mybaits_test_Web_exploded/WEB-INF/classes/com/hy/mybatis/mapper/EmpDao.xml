@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hy.mybatis.mapper.EmpDao">
+
+    <cache></cache>
+
+    <!--<resultMap id="empMap" type="employee">
+        <id property="id" column="id"/>
+        <result property="did" column="did"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="image" column="image"/>
+        <result property="salary" column="salary"/>
+        <result property="entryDate" column="entry_date"/>
+        <result property="resume" column="resume"/>
+        &lt;!&ndash;嵌套查询&ndash;&gt;
+        <association property="dept" column="did" select="com.hy.mybatis.mapper.DeptDao.queryById"/>
+
+        &lt;!&ndash;嵌套结果&ndash;&gt;
+&lt;!&ndash;        <result property="deptname" column="dept.name"></result>&ndash;&gt;
+    </resultMap>-->
+
+    <!--<select id="queryAll" parameterType="employee" resultMap="empMap">
+        <bind name="emp" value="'%'+name+'%'"/>
+        select * from employee
+        <where>
+            <if test="name != null and name !=''">
+                and name like "%" #{name} "%"
+            </if>
+            <if test="gender != null and gender !=''">
+                and gender=#{gender}
+            </if>
+            <if test="did != null and did !=0 ">
+                and did=#{did}
+            </if>
+        </where>
+    </select>-->
+
+    <!--<insert id="insert" parameterType="employee">
+        <selectKey resultType="String" keyProperty="id" order="BEFORE">
+            SELECT uuid();
+        </selectKey>
+        insert into employee(id,did,name,gender,birthday,image,salary,entry_date,resume)
+        values(#{id},#{did},#{name},#{gender},#{birthday},#{image},#{salary},#{entryDate},#{resume})
+    </insert>-->
+
+    <insert id="insertBatch" parameterType="list">
+        <selectKey resultType="String" keyProperty="id" order="BEFORE">
+            SELECT uuid();
+        </selectKey>
+        insert into employee(id,did,name,gender,birthday,image,salary,entry_date,resume) values
+        <foreach collection="list" item="emp" separator=",">
+            (#{emp.id},#{emp.did},#{emp.name},#{emp.gender},#{emp.birthday},#{emp.image},#{emp.salary},
+            #{emp.entryDate},#{emp.resume})
+        </foreach>
+    </insert>
+
+    <!--<update id="update" parameterType="employee">
+        update employee set did=#{did},name=#{name},gender=#{gender},birthday=#{birthday},image=#{image},
+        salary=#{salary},entry_date=#{entryDate},resume=#{resume}
+        where id=#{id}
+    </update>-->
+
+    <!--<delete id="delete" parameterType="employee">
+        delete from employee where id=#{id}
+    </delete>-->
+
+    <delete id="deleteBatch" parameterType="string">
+        delete from employee
+        <where>
+            id in
+            <foreach collection="array" item="item_id" open="(" close=")" separator=",">
+                #{item_id}
+            </foreach>
+        </where>
+    </delete>
+
+   <!-- <select id="queryById" parameterType="employee" resultMap="empMap">
+        select id,did,name,gender,birthday,image,salary,entry_date,resume from employee where id=#{id}
+    </select>-->
+
+    <!--<select id="queryByName" parameterType="string" resultType="string">
+        select id from employee where name=#{value}
+    </select>-->
+
+</mapper>

@@ -48,7 +48,7 @@ public class EmpController {
 
         List<Employee> employees = empService.queryAll(employee,page);
 
-        PageInfo<Employee> info=new PageInfo<>(employees);
+        PageInfo<Employee> info=new PageInfo(employees);
         //总页数
         int totalPage = info.getPages();
         //总数据条数

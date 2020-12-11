@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:property-placeholder location="classpath:db.properties"></context:property-placeholder>
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${mysql.driver}"/>
+        <property name="url" value="${mysql.url}"/>
+        <property name="username" value="${mysql.username}"/>
+        <property name="password" value="${mysql.password}"/>
+    </bean>
+
+    <!--配置sessionFactory-->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+<!--        <property name="configLocation" value="classpath:mybatis.xml"/>-->
+        <property name="configuration" ref="setting"/>
+        <property name="typeAliasesPackage" value="com.hy.mybatis.pojo"/>
+        <property name="plugins">
+            <list>
+                <bean class="com.github.pagehelper.PageInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--定义 Mapper 扫描配置器 MapperScannerConfigurer-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory" />
+        <property name="basePackage" value="com.hy.mybatis.mapper"/>
+    </bean>
+
+    <!--配置setting-->
+    <bean id="setting" class="org.apache.ibatis.session.Configuration">
+        <!--开启二级缓存-->
+        <property name="cacheEnabled" value="true"/>
+        <!--配置log4j日志-->
+        <property name="logImpl" value="org.apache.ibatis.logging.log4j.Log4jImpl"/>
+        <!--开启驼峰转换-->
+        <property name="mapUnderscoreToCamelCase" value="true"/>
+    </bean>
+
+    <!--配置jdbc事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--开启事务注解扫描-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+    <!--开启注解扫描-->
+    <context:component-scan base-package="com.hy.mybatis"/>
+</beans>
