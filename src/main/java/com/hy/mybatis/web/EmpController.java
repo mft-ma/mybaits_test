@@ -38,6 +38,11 @@ public class EmpController {
      * 根据条件查询所有
      * @return
      */
+    @RequestMapping("/bowen")
+    public String bowen(){
+        return "bowen";
+    }
+
     @GetMapping(value = "/empAll")
     public ModelAndView empServlet(Employee employee,@RequestParam(defaultValue ="1") Integer page) throws IOException {
         System.out.println("empAll的employee======" + employee);
